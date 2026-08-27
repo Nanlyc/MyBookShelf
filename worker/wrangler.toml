@@ -1,0 +1,13 @@
+name = "bookshelf-cover-upload"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# PUBLIC_BASE_URL: your R2 public bucket URL (r2.dev or custom domain) — not sensitive, fine to commit.
+# ALLOWED_ORIGIN: the single origin allowed to call this worker (your deployed app's URL, no trailing slash).
+[vars]
+PUBLIC_BASE_URL = "https://pub-xxxxxxxx.r2.dev"
+ALLOWED_ORIGIN = "https://yourname.github.io"
+
+[[r2_buckets]]
+binding = "COVERS"
+bucket_name = "bookshelf-covers"
