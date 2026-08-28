@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { lookupByIsbn } from '../services/bookLookup';
-import { uploadCover } from '../services/upload';
 import BookDetailView from './BookDetailView';
 
 const EMPTY_BOOK = {
@@ -13,11 +12,8 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
   const [form, setForm] = useState(EMPTY_BOOK);
   const [mode, setMode] = useState(book ? 'view' : 'edit'); // 'view' | 'edit'
   const [coverLoading, setCoverLoading] = useState(false);
-  const [uploadState, setUploadState] = useState(null); // null | 'loading' | 'error'
-  const [uploadError, setUploadError] = useState('');
   const [saving, setSaving] = useState(false);
   const [conflict, setConflict] = useState(false);
-  const fileRef = useRef();
   const isNew = !book;
 
   useEffect(() => {
@@ -52,22 +48,6 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
 
   function handleIsbnBlur() {
     if (form.isbn.trim() && !form.cover.trim()) handleLookupCover();
-  }
-
-  async function handleFileSelect(e) {
-    const file = e.target.files[0];
-    e.target.value = ''; // allow re-selecting the same file later
-    if (!file) return;
-    setUploadState('loading');
-    setUploadError('');
-    try {
-      const url = await uploadCover(file);
-      set('cover', url);
-      setUploadState(null);
-    } catch (err) {
-      setUploadState('error');
-      setUploadError(err.message);
-    }
   }
 
   async function handleSave() {
@@ -199,23 +179,7 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
         </Field>
         <Field label="封面圖網址">
           <div className="flex gap-3 items-start">
-            <div className="flex-1 flex flex-col gap-1.5">
-              <div className="flex gap-2">
-                <input className={inp} value={form.cover} onChange={e => set('cover', e.target.value)} placeholder="https://... 或下方上傳圖片" />
-                <button
-                  type="button"
-                  onClick={() => fileRef.current.click()}
-                  disabled={uploadState === 'loading'}
-                  className="shrink-0 rounded-lg border border-white/15 px-3 text-[11px] font-medium text-muted-foreground hover:border-accent/40 hover:text-accent disabled:opacity-40 disabled:pointer-events-none transition-colors duration-200"
-                >
-                  {uploadState === 'loading' ? '上傳中...' : '上傳圖片'}
-                </button>
-                <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleFileSelect} />
-              </div>
-              {uploadState === 'error' && (
-                <div className="text-[11px] text-red-400">{uploadError}</div>
-              )}
-            </div>
+            <input className={`${inp} flex-1`} value={form.cover} onChange={e => set('cover', e.target.value)} placeholder="https://..." />
             {form.cover && (
               <img
                 src={form.cover}
