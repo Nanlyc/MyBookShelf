@@ -15,6 +15,7 @@ export default function App() {
   const books = useBooks(isAuthenticated);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalBook, setModalBook] = useState(undefined);
+  const [modalSeed, setModalSeed] = useState(null);
   const [showImport, setShowImport] = useState(false);
   const [viewMode, setViewMode] = useState('card');
   const mainRef = useRef(null);
@@ -46,6 +47,26 @@ export default function App() {
     const csv = exportToCSV(books.active);
     const date = new Date().toISOString().slice(0, 10);
     downloadCSV(csv, `書櫃備份_${date}.csv`);
+  }
+
+  // Prefills a blank "new book" form from an existing series entry — same
+  // authors/publisher/source/tags/series, series_order bumped by one where numeric.
+  function handleAddNext(book) {
+    const order = Number(book.series_order);
+    setModalSeed({
+      authors: book.authors,
+      publisher: book.publisher,
+      source: book.source,
+      tags: book.tags,
+      series_name: book.series_name,
+      series_order: Number.isFinite(order) ? String(order + 1) : '',
+    });
+    setModalBook(null);
+  }
+
+  function closeModal() {
+    setModalBook(undefined);
+    setModalSeed(null);
   }
 
   // Clears all other filters and applies just this one, per user's chosen behavior
@@ -104,7 +125,7 @@ export default function App() {
         {isAuthenticated ? (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setModalBook(null)}
+              onClick={() => { setModalBook(null); setModalSeed(null); }}
               className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:brightness-110 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] active:scale-[0.98] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               + 新增書籍
@@ -204,6 +225,7 @@ export default function App() {
       {modalBook !== undefined && (
         <BookModal
           book={modalBook}
+          seed={modalSeed}
           allSeries={books.allSeries}
           allSources={books.allSources}
           allPublishers={books.allPublishers}
@@ -211,7 +233,8 @@ export default function App() {
           onDelete={books.deleteBook}
           onStatusChange={books.updateStatus}
           onFilterBy={handleFilterBy}
-          onClose={() => setModalBook(undefined)}
+          onAddNext={handleAddNext}
+          onClose={closeModal}
         />
       )}
 

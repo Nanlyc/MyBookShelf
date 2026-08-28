@@ -11,7 +11,7 @@ function InfoPill({ label, onClick }) {
   );
 }
 
-export default function BookDetailView({ book, onEdit, onStatusChange, onFilterBy, onClose }) {
+export default function BookDetailView({ book, onEdit, onAddNext, onStatusChange, onFilterBy, onClose }) {
   const tags = (book.tags || '').split(',').map(t => t.trim()).filter(Boolean);
   const sources = (book.source || '').split(',').map(s => s.trim()).filter(Boolean);
 
@@ -99,12 +99,22 @@ export default function BookDetailView({ book, onEdit, onStatusChange, onFilterB
 
       <div className="h-px bg-border" />
 
-      <button
-        onClick={onEdit}
-        className="rounded-lg bg-accent py-2.5 text-xs font-semibold text-accent-foreground hover:brightness-110 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] active:scale-[0.98] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background-alt"
-      >
-        編輯書籍
-      </button>
+      <div className="flex gap-2.5">
+        <button
+          onClick={onEdit}
+          className="flex-1 rounded-lg bg-accent py-2.5 text-xs font-semibold text-accent-foreground hover:brightness-110 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] active:scale-[0.98] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background-alt"
+        >
+          編輯書籍
+        </button>
+        {book.series_name && (
+          <button
+            onClick={onAddNext}
+            className="rounded-lg border border-white/15 px-4 py-2.5 text-xs text-muted-foreground hover:border-accent/40 hover:text-accent active:scale-[0.98] transition-all duration-200"
+          >
+            新增下一集
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ const EMPTY_BOOK = {
   notes: '', dateFinished: '', series_name: '', series_order: '', updatedAt: '',
 };
 
-export default function BookModal({ book, allSeries, allSources, allPublishers, onSave, onDelete, onClose, onStatusChange, onFilterBy }) {
+export default function BookModal({ book, seed, allSeries, allSources, allPublishers, onSave, onDelete, onClose, onStatusChange, onFilterBy, onAddNext }) {
   const [form, setForm] = useState(EMPTY_BOOK);
   const [mode, setMode] = useState(book ? 'view' : 'edit'); // 'view' | 'edit'
   const [coverLoading, setCoverLoading] = useState(false);
@@ -21,10 +21,10 @@ export default function BookModal({ book, allSeries, allSources, allPublishers, 
   const isNew = !book;
 
   useEffect(() => {
-    setForm(book ? { ...book } : EMPTY_BOOK);
+    setForm(book ? { ...book } : { ...EMPTY_BOOK, ...seed });
     setMode(book ? 'view' : 'edit');
     setConflict(false);
-  }, [book]);
+  }, [book, seed]);
 
   function set(key, val) {
     setForm(f => ({ ...f, [key]: val }));
@@ -84,7 +84,7 @@ export default function BookModal({ book, allSeries, allSources, allPublishers, 
     }
   }
 
-  if (mode === 'view') {
+  if (mode === 'view' && book) {
     return (
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
         <div
@@ -94,6 +94,7 @@ export default function BookModal({ book, allSeries, allSources, allPublishers, 
           <BookDetailView
             book={book}
             onEdit={() => setMode('edit')}
+            onAddNext={() => onAddNext(book)}
             onStatusChange={onStatusChange}
             onFilterBy={onFilterBy}
             onClose={onClose}
