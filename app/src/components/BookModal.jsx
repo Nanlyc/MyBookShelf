@@ -109,7 +109,7 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
           <input className={inp} value={form.authors} onChange={e => set('authors', e.target.value)} placeholder="作者名稱" />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <Field label="出版社">
             <input className={inp} list="publisher-list" value={form.publisher} onChange={e => set('publisher', e.target.value)} />
             <datalist id="publisher-list">
@@ -124,7 +124,7 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
           </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <Field label="狀態">
             <select className={inp} value={form.status} onChange={e => set('status', e.target.value)}>
               <option>未讀</option>
@@ -140,7 +140,7 @@ export default function BookModal({ book, seed, allSeries, allSources, allPublis
           </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <Field label="系列名稱">
             <input
               className={inp}
